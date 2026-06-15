@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎮 Ігровий ШІ-помічник</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">🎮</div>
+        <div>
+          <h1>ШІ-помічник</h1>
+          <p>для ваших ігор</p>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>Гра</span>
+        <select id="game">
+          <option value="auto">🔍 Авто-визначення</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Провайдер ШІ</span>
+        <select id="provider">
+          <option value="groq">Groq (безкоштовно)</option>
+          <option value="openrouter">OpenRouter (безкоштовно)</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Ключ API <small id="keyState"></small></span>
+        <input id="apiKey" type="password" placeholder="вставте ключ (необов'язково)" />
+        <small class="hint" id="keyHint"></small>
+      </label>
+
+      <div class="games-list" id="gamesList"></div>
+
+      <div class="sidebar-footer">
+        <p>Відповіді спираються на офіційні вікі та містять посилання на джерела.</p>
+      </div>
+    </aside>
+
+    <main class="chat">
+      <div class="messages" id="messages">
+        <div class="welcome">
+          <h2>Вітаю! 👋</h2>
+          <p>Я допоможу з <b>Hearts of Iron IV</b>, <b>Minecraft</b>, <b>Terraria</b>,
+             <b>Don't Starve Together</b> та <b>Albion Online</b>.</p>
+          <p>Поставте запитання або додайте скріншот гри — я проаналізую його
+             та відповім із посиланнями на офіційну вікі.</p>
+          <div class="examples" id="examples"></div>
+        </div>
+      </div>
+
+      <form class="composer" id="composer">
+        <div class="preview" id="preview" hidden>
+          <img id="previewImg" alt="скріншот" />
+          <button type="button" id="removeImg" title="Прибрати">✕</button>
+        </div>
+        <div class="composer-row">
+          <button type="button" class="icon-btn" id="attachBtn" title="Додати скріншот">📎</button>
+          <input type="file" id="fileInput" accept="image/*" hidden />
+          <textarea id="input" rows="1"
+            placeholder="Напишіть питання або вставте скріншот (Ctrl+V)…"></textarea>
+          <button type="submit" class="send-btn" id="sendBtn">➤</button>
+        </div>
+        <small class="composer-hint">Enter — надіслати · Shift+Enter — новий рядок</small>
+      </form>
+    </main>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

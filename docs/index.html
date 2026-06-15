@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>🎮 Ігровий ШІ-помічник — Amegi</title>
+<meta name="description" content="Універсальний ШІ-помічник для ігор: аналізує скріншоти, відповідає українською, спирається на офіційні вікі та дає посилання на джерела. Безкоштовні провайдери Groq і OpenRouter." />
+<style>
+  :root{
+    --bg:#0f1117; --panel:#171a23; --panel-2:#1f2330; --border:#2a2f3d;
+    --text:#e6e8ee; --muted:#9aa3b2; --accent:#6c8cff; --accent-2:#8a6cff; --ok:#4ade80;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  a{color:#b9c5ff;text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+  .accent{background:linear-gradient(135deg,var(--accent),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);background:rgba(15,17,23,.75);border-bottom:1px solid var(--border)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700}
+  .logo .ico{width:38px;height:38px;display:grid;place-items:center;border-radius:10px;font-size:20px;background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+  nav .links{display:flex;gap:22px;font-size:14px}
+  nav .links a{color:var(--muted)}
+  nav .links a:hover{color:var(--text)}
+
+  /* hero */
+  .hero{text-align:center;padding:80px 0 60px}
+  .badge{display:inline-block;font-size:13px;color:var(--accent);border:1px solid var(--accent);border-radius:20px;padding:5px 14px;margin-bottom:22px}
+  .hero h1{font-size:clamp(34px,6vw,58px);line-height:1.1;letter-spacing:-1px}
+  .hero p.lead{color:var(--muted);font-size:clamp(16px,2.4vw,20px);max-width:680px;margin:20px auto 0}
+  .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+  .btn{padding:13px 26px;border-radius:12px;font-weight:600;font-size:15px;border:1px solid var(--border)}
+  .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:none}
+  .btn.ghost{background:var(--panel-2);color:var(--text)}
+  .btn:hover{transform:translateY(-1px)}
+
+  section{padding:54px 0}
+  h2.title{font-size:clamp(26px,4vw,36px);text-align:center;margin-bottom:8px}
+  p.sub{text-align:center;color:var(--muted);margin-bottom:38px}
+
+  .grid{display:grid;gap:18px}
+  .features{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px}
+  .card .ec{font-size:28px;margin-bottom:12px}
+  .card h3{font-size:18px;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:14.5px}
+
+  .games{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+  .game{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center}
+  .game .g-ico{font-size:30px}
+  .game h4{margin:8px 0 4px;font-size:16px}
+  .game small{color:var(--muted);font-size:12px}
+
+  .steps{counter-reset:s;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .step{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px;position:relative}
+  .step::before{counter-increment:s;content:counter(s);position:absolute;top:-14px;left:22px;width:34px;height:34px;display:grid;place-items:center;border-radius:9px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff}
+  .step h3{margin:14px 0 6px;font-size:17px}
+  .step p{color:var(--muted);font-size:14px}
+
+  pre{background:#0b0d13;border:1px solid var(--border);border-radius:14px;padding:20px;overflow:auto;font-size:13.5px;line-height:1.7}
+  pre code{font-family:"Cascadia Code",Consolas,monospace;color:#cdd6f4}
+  .k{color:#8a6cff}.c{color:#6b7280}.s{color:#4ade80}
+
+  .note{background:var(--panel);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:16px 18px;color:var(--muted);font-size:14px;margin-top:22px}
+
+  footer{border-top:1px solid var(--border);padding:30px 0;text-align:center;color:var(--muted);font-size:13px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+  .chip{font-size:12px;color:var(--muted);background:var(--panel-2);border:1px solid var(--border);border-radius:20px;padding:6px 12px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo"><span class="ico">🎮</span> Amegi</div>
+    <div class="links">
+      <a href="#features">Можливості</a>
+      <a href="#games">Ігри</a>
+      <a href="#how">Як працює</a>
+      <a href="#start">Запуск</a>
+      <a href="https://github.com/deviverr/amegi">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="badge">🆓 Безкоштовно · Groq &amp; OpenRouter</span>
+    <h1>Універсальний <span class="accent">ШІ-помічник</span><br>для ваших ігор</h1>
+    <p class="lead">Аналізує скріншоти гри, відповідає на запитання українською та
+       спирається на <b>офіційні вікі</b> — з посиланнями на джерела до кожної відповіді.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/deviverr/amegi">⭐ Код на GitHub</a>
+      <a class="btn ghost" href="#start">🚀 Як запустити</a>
+    </div>
+  </div>
+</header>
+
+<section id="features">
+  <div class="wrap">
+    <h2 class="title">Можливості</h2>
+    <p class="sub">Усе, що потрібно гравцю — в одному помічнику</p>
+    <div class="grid features">
+      <div class="card"><div class="ec">📷</div><h3>Аналіз скріншотів</h3>
+        <p>Завантажте або вставте (Ctrl+V) скріншот — помічник «бачить» гру завдяки vision-моделям.</p></div>
+      <div class="card"><div class="ec">📚</div><h3>Перевірені факти</h3>
+        <p>Відповіді будуються на статтях з офіційних ігрових вікі, а не «вигадуються» моделлю.</p></div>
+      <div class="card"><div class="ec">🔗</div><h3>Посилання на джерела</h3>
+        <p>Кожна відповідь містить позначки [1], [2] з прямими посиланнями на вікі для перевірки.</p></div>
+      <div class="card"><div class="ec">🇺🇦</div><h3>Українською мовою</h3>
+        <p>Питання й відповіді — рідною мовою, навіть якщо вікі англомовна.</p></div>
+      <div class="card"><div class="ec">🆓</div><h3>Безкоштовні провайдери</h3>
+        <p>Працює через Groq та OpenRouter — швидко й без оплати. Свій ключ вводите самі.</p></div>
+      <div class="card"><div class="ec">➕</div><h3>Легко розширювати</h3>
+        <p>Нова гра додається одним записом у конфігурації з посиланням на її вікі.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="games">
+  <div class="wrap">
+    <h2 class="title">Підтримувані ігри</h2>
+    <p class="sub">Старт із п'яти популярних ігор</p>
+    <div class="grid games">
+      <div class="game"><div class="g-ico">⚔️</div><h4>Hearts of Iron IV</h4><small>Hearts of Iron Wiki</small></div>
+      <div class="game"><div class="g-ico">⛏️</div><h4>Minecraft</h4><small>minecraft.wiki</small></div>
+      <div class="game"><div class="g-ico">🌳</div><h4>Terraria</h4><small>terraria.wiki.gg</small></div>
+      <div class="game"><div class="g-ico">🔥</div><h4>Don't Starve Together</h4><small>dontstarve.fandom.com</small></div>
+      <div class="game"><div class="g-ico">🏹</div><h4>Albion Online</h4><small>albion.wiki.gg</small></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2 class="title">Як це працює</h2>
+    <p class="sub">Технологія RAG — модель спирається на джерела, а не вигадує</p>
+    <div class="steps">
+      <div class="step"><h3>Аналіз запиту</h3><p>ШІ визначає гру за питанням чи скріншотом і формує точні пошукові запити до вікі.</p></div>
+      <div class="step"><h3>Пошук у вікі</h3><p>Помічник дістає перевірені витяги з офіційної вікі гри разом із посиланнями.</p></div>
+      <div class="step"><h3>Відповідь із джерелами</h3><p>Модель відповідає українською, спираючись лише на знайдені факти, з позначками [1], [2].</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="start">
+  <div class="wrap">
+    <h2 class="title">Швидкий старт</h2>
+    <p class="sub">Запускається локально на Windows за пару хвилин</p>
+    <pre><code><span class="c"># 1. Візьміть безкоштовний ключ API</span>
+<span class="c">#    Groq:       https://console.groq.com/keys</span>
+<span class="c">#    OpenRouter: https://openrouter.ai/keys</span>
+
+<span class="c"># 2. Клонуйте репозиторій</span>
+<span class="k">git</span> clone https://github.com/deviverr/amegi.git
+<span class="k">cd</span> amegi
+
+<span class="c"># 3. Запустіть (створить середовище й встановить залежності)</span>
+<span class="k">.\start.bat</span>
+
+<span class="c"># 4. Відкрийте у браузері</span>
+<span class="s">http://127.0.0.1:8000</span></code></pre>
+    <div class="note">
+      ⚙️ Помічник — це локальний застосунок (Python + FastAPI). Ця сторінка —
+      презентаційний лендинг. Сам помічник працює у вас на комп'ютері, тож ваш
+      ключ API нікуди не передається, окрім обраного провайдера ШІ.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="logo" style="justify-content:center">🎮 Amegi — Game AI Assistant</div>
+    <div class="chips">
+      <span class="chip">Python</span><span class="chip">FastAPI</span>
+      <span class="chip">Groq</span><span class="chip">OpenRouter</span>
+      <span class="chip">RAG</span><span class="chip">MediaWiki API</span>
+    </div>
+    <p style="margin-top:16px">Зроблено для гравців · <a href="https://github.com/deviverr/amegi">github.com/deviverr/amegi</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
